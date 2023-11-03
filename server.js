@@ -44,10 +44,37 @@ const methodOverride = require('method-override')
 mongoose.connect(DATABASE_URL, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
-  })
-  
+  });
   // Connection Events
   mongoose.connection
     .on("open", () => console.log("Your are connected to mongoose"))
     .on("close", () => console.log("Your are disconnected from mongoose"))
     .on("error", (error) => console.log(error));
+
+
+////////////////////////////////
+////////MODELS//////////////////
+////////////////////////////////
+
+
+///////////////////////////////
+// MIDDLEWARE
+////////////////////////////////
+
+// Importing cors/morgans for security API. 
+
+//logging http requests and response in the dev
+app.use(morgan("dev"))
+// parse incoming json data
+app.use(express.json())
+// enable custom http methods specified by _method
+app.use(methodOverride('_method'))
+
+// configure cors 
+app.use(corsOptions)
+
+
+
+/////////////////////////////
+///////////ROUTES////////
+//////////////////////////////
