@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
   });
 
 // Get all notes
-router.get('/', async (req, res) => {
+router.get('/dailylogs', async (req, res) => {
     console.log('retrieved notes')
     try {
       const notes = await Notes.find();
