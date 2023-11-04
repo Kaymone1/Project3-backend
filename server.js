@@ -19,10 +19,10 @@ const { PORT, DATABASE_URL } = process.env
 // import the mongoose library for the MongoDB database interaction
 const mongoose = require("mongoose")
 
-// import the cors library for 3rd pary 
+// import the cors library for 3rd party (not sure if cors is needed)
 const cors = require("cors")
 
-//waiting for new deployment link to add as second string.
+//waiting for new deployment link to add as second string. not sure if this is needed
 // const corsOptions = {
 //     origin: ["http://localhost:3000", "https://roaring-youtiao-db8865.netlify.app"],
 //     credentials: true, 
@@ -38,7 +38,17 @@ const methodOverride = require('method-override')
 ////////////////////////////////
 ////////MODELS//////////////////
 ////////////////////////////////
-const Notes = require('./model/notesTemplate');
+const NotesTemplateSchema = new mongoose.Schema({
+  name: { 
+      type: String, 
+      required: true
+  },
+  date: Date,
+  comment: { type: String,
+  },
+});
+
+const Notes = mongoose.model('Notes', NotesTemplateSchema); 
 
 ///////////////////////////////
 // MIDDLEWARE
@@ -56,7 +66,7 @@ app.use(express.json())
 app.use(methodOverride('_method'))
 
 // configure cors 
-// app.use(corsOptions)
+app.use(corsOptions)
 
 ////////////////////////////////
 ////////DATABASE CONNECTION/////
@@ -70,21 +80,56 @@ mongoose.connection
   .on("close", () => console.log("Your are disconnected from mongoose"))
   .on("error", (error) => console.log(error));
 
-//Controllers
-const notesController = require('./controller/notes')
-
-
-//using controller pages app.use
-app.use('/notes', notesController)
-
 /////////////////////////////
 ///////////ROUTES////////
 //////////////////////////////
 
-//landing page 
+//test route
 app.get('/', (req, res) => {
   res.send('hello world')
 })
+
+// Notes INDEX ROUTE
+app.get("/notes", async (req, res) => {
+  try {
+      // send all Notes 
+      res.json(await Notes.find({}))
+  } catch (error) {
+      // send error
+      res.status(400).json(error)
+  }
+})
+
+// Notes CREATE ROUTE 
+app.post("/notes", async (req, res) => {
+  try {
+      // create a person 
+      res.json(await Notes.create(req.body))
+  } catch (error) {
+      // send error
+      res.status(400).json(error)
+  }
+})
+
+// Notes UPDATE ROUTE 
+app.put("/notes/:id", async (req, res) => {
+  try {
+      res.json(await Notes.findByIdAndUpdate(req.params.id, req.body, {new: true}))
+  } catch (error) {
+      res.status(400).json(error)
+  }
+})
+
+// Notes DESTROY ROUTE 
+app.delete("/notes/:id", async (req, res) => {
+  try {
+      res.json(await Notes.findByIdAndRemove(req.params.id))
+  } catch (error) {
+      res.send(400).json(error)        
+  }
+})
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is listening on PORT: http://localhost:${PORT}`)
