@@ -14,7 +14,7 @@ const express = require("express")
 const app = express()
 
 // destructure properties from environment variables 
-const { PORT = 3000, DATABASE_URL } = process.env
+const { PORT, DATABASE_URL } = process.env
 
 // import the mongoose library for the MongoDB database interaction
 const mongoose = require("mongoose")
@@ -36,25 +36,9 @@ const morgan = require("morgan")
 const methodOverride = require('method-override')
 
 ////////////////////////////////
-////////DATABASE CONNECTION/////
-////////////////////////////////
-
-// connect to the MOngoDB database using Mongoose
-mongoose.connect(DATABASE_URL, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  });
-  // Connection Events
-  mongoose.connection
-    .on("open", () => console.log("Your are connected to mongoose"))
-    .on("close", () => console.log("Your are disconnected from mongoose"))
-    .on("error", (error) => console.log(error));
-
-
-////////////////////////////////
 ////////MODELS//////////////////
 ////////////////////////////////
-
+const Notes = require('./model/notesTemplate');
 
 ///////////////////////////////
 // MIDDLEWARE
@@ -72,7 +56,7 @@ app.use(express.json())
 app.use(methodOverride('_method'))
 
 // configure cors 
-app.use(corsOptions)
+// app.use(corsOptions)
 
 ////////////////////////////////
 ////////DATABASE CONNECTION/////
@@ -89,3 +73,12 @@ mongoose.connection
 /////////////////////////////
 ///////////ROUTES////////
 //////////////////////////////
+
+//landing page 
+app.get('/', (req, res) => {
+  res.send('hello world')
+})
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on PORT: http://localhost:${PORT}`)
+})
