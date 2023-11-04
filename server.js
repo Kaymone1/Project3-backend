@@ -70,6 +70,13 @@ mongoose.connection
   .on("close", () => console.log("Your are disconnected from mongoose"))
   .on("error", (error) => console.log(error));
 
+//Controllers
+const notesController = require('./controller/notes')
+
+
+//using controller pages app.use
+app.use('/notes', notesController)
+
 /////////////////////////////
 ///////////ROUTES////////
 //////////////////////////////
