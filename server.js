@@ -3,18 +3,12 @@
 ////////////////////////////////
 
 // Import & configure dependencies
-// configure environment variable 
-require('dotenv').config()
-
-// Import the express-session library for handling user sessions
-const expressSession = require('express-session')
-
 // Import the express library 
 const express = require("express")
 const app = express()
 
 // destructure properties from environment variables 
-const { PORT, DATABASE_URL } = process.env
+const { DATABASE_URL, PORT = 3000 } = process.env
 
 // import the mongoose library for the MongoDB database interaction
 const mongoose = require("mongoose")
@@ -22,20 +16,27 @@ const mongoose = require("mongoose")
 // import the cors library for 3rd party (not sure if cors is needed)
 const cors = require("cors")
 
-//waiting for new deployment link to add as second string. not sure if this is needed
-// const corsOptions = {
-//     origin: ["http://localhost:3000", "https://roaring-youtiao-db8865.netlify.app"],
-//     credentials: true, 
-//   }
-  
-
 // import morgon for loggin http requests and responses
 const morgan = require("morgan")
 
-// import the method override for handling custom HTTP methods
-const methodOverride = require('method-override')
+// configure environment variable 
+require('dotenv').config()
+
 
 ////////////////////////////////
+////////DATABASE CONNECTION/////
+////////////////////////////////
+
+// connect to the MOngoDB database using Mongoose
+mongoose.connect(DATABASE_URL);
+// Connection Events
+const db = mongoose.connection
+// optional create status messages to check mongo connection 
+db.on('error', (err) => { console.log('ERROR: ' , err)})
+db.on('connected', () => { console.log('mongo connected')})
+db.on('disconnected', () => { console.log('mongo disconnected')})
+
+
 ////////MODELS//////////////////
 ////////////////////////////////
 const NotesTemplateSchema = new mongoose.Schema({
@@ -45,44 +46,28 @@ const NotesTemplateSchema = new mongoose.Schema({
   },
   date: Date,
   comment: { type: String,
-  },
+    required: true
+  }
 });
 
 const Notes = mongoose.model('Notes', NotesTemplateSchema); 
 
+
 ///////////////////////////////
 // MIDDLEWARE
 ////////////////////////////////
-// this will parse the data create to "req.body object"
-app.use(express.urlencoded({ extended: true }))
-app.use(express.static('public'));
-// Importing cors/morgans for security API. 
 
+// Importing cors/morgans for security API. 
+app.use(cors())
 //logging http requests and response in the dev
 app.use(morgan("dev"))
-// parse incoming json data
+
 app.use(express.json())
-// enable custom http methods specified by _method
-app.use(methodOverride('_method'))
-
-// configure cors 
-app.use(corsOptions)
-
-////////////////////////////////
-////////DATABASE CONNECTION/////
-////////////////////////////////
-
-// connect to the MOngoDB database using Mongoose
-mongoose.connect(DATABASE_URL);
-// Connection Events
-mongoose.connection
-  .on("open", () => console.log("Your are connected to mongoose"))
-  .on("close", () => console.log("Your are disconnected from mongoose"))
-  .on("error", (error) => console.log(error));
 
 /////////////////////////////
 ///////////ROUTES////////
 //////////////////////////////
+////////////////////////////////
 
 //test route
 app.get('/', (req, res) => {
@@ -129,7 +114,9 @@ app.delete("/notes/:id", async (req, res) => {
   }
 })
 
-
+////////////////////////////////
+// LISTENER 
+////////////////////////////////
 
 app.listen(PORT, () => {
   console.log(`Server is listening on PORT: http://localhost:${PORT}`)
