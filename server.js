@@ -10,7 +10,7 @@ const express = require("express")
 const app = express()
 
 // destructure properties from environment variables 
-const { DATABASE_URL, PORT = 3000 } = process.env
+const { DATABASE_URL, PORT = 4000 } = process.env
 
 // import the mongoose library for the MongoDB database interaction
 const mongoose = require("mongoose")
@@ -38,9 +38,18 @@ db.on('disconnected', () => { console.log('mongo disconnected')})
 ////////MODELS//////////////////
 ////////////////////////////////
 const NotesTemplateSchema = new mongoose.Schema({
-  name: String,
-  date: Date,
-  comment: String
+  title: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Notes = mongoose.model('Notes', NotesTemplateSchema); 
