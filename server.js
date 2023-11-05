@@ -1,6 +1,8 @@
 ///////////////////////////////
 /////////DEPENDENCIES///////////
 ////////////////////////////////
+// configure environment variable 
+require('dotenv').config()
 
 // Import & configure dependencies
 // Import the express library 
@@ -18,9 +20,6 @@ const cors = require("cors")
 
 // import morgon for loggin http requests and responses
 const morgan = require("morgan")
-
-// configure environment variable 
-require('dotenv').config()
 
 
 ////////////////////////////////
