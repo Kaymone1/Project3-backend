@@ -111,12 +111,12 @@ app.put("/notes/:id", async (req, res) => {
 app.delete('/notes/:id', async (req, res) => {
   try {
     console.log('you hit delete route')
-    const deletedNote = await Notes.findByIdAndRemove(req.params.id);
+    const result = await Notes.deleteOne({ _id: req.params.id });
 
-    if (!deletedNote) {
+    if (result.deletedCount === 0) {
       res.status(404).json({ message: 'Note not found' });
     } else {
-      res.status(200).json(deletedNote);
+      res.status(204).json(); // 204 No Content for successful deletion
     }
   } catch (error) {
     res.status(500).json({ error: 'An error occurred' });
