@@ -21,7 +21,6 @@ const cors = require("cors")
 // import morgon for loggin http requests and responses
 const morgan = require("morgan")
 
-
 ////////////////////////////////
 ////////DATABASE CONNECTION/////
 ////////////////////////////////
