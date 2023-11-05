@@ -38,14 +38,9 @@ db.on('disconnected', () => { console.log('mongo disconnected')})
 ////////MODELS//////////////////
 ////////////////////////////////
 const NotesTemplateSchema = new mongoose.Schema({
-  name: { 
-      type: String, 
-      required: true
-  },
+  name: String,
   date: Date,
-  comment: { type: String,
-    required: true
-  }
+  comment: String
 });
 
 const Notes = mongoose.model('Notes', NotesTemplateSchema); 
